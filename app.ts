@@ -7,17 +7,17 @@ const app = express();
 app.use(express.json());
 const port = 3000;
 
-// Função para garantir que os schemas existam
+// Function to ensure schemas exist
 async function ensureSchemaExists(schemaName: any) {
     await sequelize.createSchema(schemaName, { logging: false }).catch(err => console.log(`Schema ${schemaName} já existe ou não pode ser criado.`));
 }
 
-// Garante a existência dos schemas antes de iniciar o servidor
+// Ensures the existence of schemas before starting the server
 async function initialize() {
     await ensureSchemaExists('user_1');
     await ensureSchemaExists('user_2');
 
-    // Inicia o servidor após a verificação dos schemas
+    // Start the server after checking the schemas
     app.listen(port, () => {
         console.log(`servidor rodando em http://localhost:${port}`);
     });
@@ -30,10 +30,10 @@ app.get('/users', async (req, res) => {
     }
 
     try {
-        // Selecionando o schema dinamicamente
+        // Selecting the schema dynamically
         const userModel = User.schema(schema);
 
-        // Buscando todos os usuários no schema especificado
+        // Fetching all users in the specified schema
         const users = await userModel.findAll();
 
         res.json(users);
@@ -52,10 +52,10 @@ app.post('/create-user', async (req, res) => {
     }
 
     try {
-        // Selecionando o schema dinamicamente
+        // Selecting the schema dynamically
         const userModel = User.schema(schema);
 
-        // Tentando criar um usuário com os dados fornecidos
+        // Trying to create a user with the provided data
         const userFake = await userModel.create({ name, email });
 
         res.json(userFake);
@@ -74,14 +74,14 @@ app.post('/create-user', async (req, res) => {
     
 
     try {
-        // Selecionando o schema dinamicamente
+        // Selecting the schema dynamically
         const userModel = User.schema(schema);
 
-        // Sincroniza o modelo `User` com o banco de dados para o schema atual
-        // Isso criará a tabela se ela não existir
+        // Synchronize the `User` model with the database for the current schema
+        // This will create the table if it doesn't exist
         await userModel.sync();
 
-        // Criando um usuário falso
+       // Creating a fake user
         const userFake = await userModel.create({
             name: faker.person.firstName(),
             email: faker.internet.email(),
